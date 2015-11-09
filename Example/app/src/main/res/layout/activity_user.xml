@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".io.passworks.lighthousetestbed.BeaconsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorAccent"
+        app:theme="@style/MyActionBar" />
+
+    <TextView
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:id="@+id/identifiedAsTextView"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="40dp"
+        android:textColor="@android:color/black"
+        android:text="IDENTIFIER"
+        android:gravity="left"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/identifierEditText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:inputType="textEmailAddress" />
+
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_alignParentRight="true"
+            android:id="@+id/identifyButton"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:text="IDENTIFY" />
+        <Button
+            android:layout_alignParentLeft="true"
+            android:id="@+id/logoutButton"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:text="LOGOUT" />
+    </RelativeLayout>
+
+
+
+</LinearLayout>
