@@ -1,4 +1,4 @@
-# Lighthouse
+# Passworks Beacon Management Platform
 
 Lighthouse is the SDK that connects Passworks.io beacons service to your Android application.
 In the Passworks.io dashboard you can add your own beacons, manage your tags and the events associated with beacon entry or exit.
