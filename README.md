@@ -5,7 +5,7 @@ In the Passworks.io dashboard you can add your own beacons, manage your tags and
 
 ## Integration
 
-Add HOKO to your `gradle.build` file:
+Add Lighthouse to your `gradle.build` file:
 
 ```java
 // Build.gradle
