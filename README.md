@@ -3,6 +3,17 @@
 Lighthouse is the SDK that connects Passworks.io beacons service to your Android application.
 In the Passworks.io dashboard you can add your own beacons, manage your tags and the events associated with beacon entry or exit.
 
+## Integration
+
+Add HOKO to your `gradle.build` file:
+
+```java
+// Build.gradle
+dependencies {
+	compile 'io.passworks:lighthouse:1.0'
+}
+```
+
 ## Setup
 
 ### Step 1 - SDK Setup
@@ -20,7 +31,9 @@ public class BeaconsApplication extends Application {
 }
 ```
 
-### Step 2 - AndroidManifest.xml Setup
+### Step 2 - AndroidManifest.xml
+
+**This step is only necessary if you are not integrating through gradle.**
 
 To make sure your application can scan for beacons and communicate with our servers, it requires the `BLUETOOTH`, `BLUETOOTH_ADMIN` and `INTERNET` permissions to be added to your application. 
 
