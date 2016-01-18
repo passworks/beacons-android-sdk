@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         mUsernameEditText.setText(getPreferences(Context.MODE_PRIVATE).getString("username", ""));
         mPasswordEditText.setText(getPreferences(Context.MODE_PRIVATE).getString("password", ""));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+            Lighthouse.requestCoarseLocationPermission(this, 0);
         }
     }
 
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         final String password = mPasswordEditText.getText().toString();
 
         final Request request = new Request.Builder()
-                .url("http://magellan.beacons.staging.passworks.io/v1/apps/")
+                .url("http://magellan.passworks.io/v1/apps/")
                 .build();
 
         mOkHttpClient.setAuthenticator(new Authenticator() {
@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (jsonObject != null) {
                         String token = jsonObject.optString("api_secret_android");
                         LoginActivity.this.getPreferences(Context.MODE_PRIVATE).edit().putString("api_secret_android", token).apply();
-                        //Lighthouse.setup(getApplicationContext(), token);
+
                         Intent intent = new Intent(LoginActivity.this, BeaconsActivity.class);
                         intent.putExtra("token", token);
                         startActivity(intent);

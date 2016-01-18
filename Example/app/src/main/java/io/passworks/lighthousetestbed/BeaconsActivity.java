@@ -43,24 +43,27 @@ public class BeaconsActivity extends AppCompatActivity implements BeaconsListene
     private List<Beacon> mBeacons;
     private List<Event> mEvents;
 
+    private Lighthouse mLighthouse;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String token = getIntent().getStringExtra("token");
         setContentView(R.layout.activity_beacons);
-        Lighthouse.setup(this, token);
-        Lighthouse.getInstance().setEventsTriggerFilter(new EventsTriggerFilter() {
+        Lighthouse.setToken(token);
+        mLighthouse = Lighthouse.with(this);
+        mLighthouse.setEventsTriggerFilter(new EventsTriggerFilter() {
             @Override
             public boolean shouldTriggerEvent(Event event, Beacon beacon) {
                 return event.getName().contains("Android");
             }
         });
-        Lighthouse.getInstance().setBeaconsListener(this);
-        Lighthouse.getInstance().setEventsListener(this);
-        Lighthouse.getInstance().lightUp();
+        mLighthouse.setBeaconsListener(this);
+        mLighthouse.setEventsListener(this);
+        mLighthouse.lightUp();
         mListView = (ListView) findViewById(R.id.listView);
-        mBeacons = Lighthouse.getInstance().getBeacons();
-        mEvents = Lighthouse.getInstance().getEvents();
+        mBeacons = mLighthouse.getBeacons();
+        mEvents = mLighthouse.getEvents();
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mAdapter = new BaseAdapter() {
@@ -112,7 +115,7 @@ public class BeaconsActivity extends AppCompatActivity implements BeaconsListene
                     adb.setSingleChoiceItems(new CharSequence[]{"Unknown", "Immediate", "Near", "Far"}, beacon.getProximity().ordinal(), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            BeaconProxy.changeBeaconProximity(beacon, Proximity.values()[which]);
+                            BeaconProxy.changeBeaconProximity(mLighthouse, beacon, Proximity.values()[which]);
                             dialog.dismiss();
                         }
                     });
@@ -122,8 +125,8 @@ public class BeaconsActivity extends AppCompatActivity implements BeaconsListene
                     // do nothing
                 } else if (object instanceof Event) {
                     Event event = (Event) object;
-                    Beacon beacon = event.getBeacons().get(0);
-                    Lighthouse.getInstance().getNotificationsManager().handleEvent(event, beacon);
+                    Beacon beacon = event.getBeacons(mLighthouse.getDatabaseHelper()).get(0);
+                    mLighthouse.getNotificationsManager().handleEvent(event, beacon);
                 }
             }
         });
@@ -158,23 +161,23 @@ public class BeaconsActivity extends AppCompatActivity implements BeaconsListene
 
     @Override
     public void beaconsRefreshed(List<Beacon> beacons) {
-        mBeacons = Lighthouse.getInstance().getBeacons();
-        mEvents = Lighthouse.getInstance().getEvents();
+        mBeacons = mLighthouse.getBeacons();
+        mEvents = mLighthouse.getEvents();
         refreshAdapter();
-        DatabaseHelper.getInstance().printDB();
+        mLighthouse.getDatabaseHelper().printDB();
     }
 
     @Override
     public void beaconChangedProximity(Beacon beacon) {
-        mBeacons = Lighthouse.getInstance().getBeacons();
-        mEvents = Lighthouse.getInstance().getEvents();
+        mBeacons = mLighthouse.getBeacons();
+        mEvents = mLighthouse.getEvents();
         refreshAdapter();
     }
 
     @Override
     public void eventTriggered(Event event, Beacon beacon) {
-        mBeacons = Lighthouse.getInstance().getBeacons();
-        mEvents = Lighthouse.getInstance().getEvents();
+        mBeacons = mLighthouse.getBeacons();
+        mEvents = mLighthouse.getEvents();
         refreshAdapter();
     }
 }

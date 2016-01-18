@@ -23,9 +23,12 @@ public class UserActivity extends AppCompatActivity {
     private Button mIdentifyButton;
     private Button mLogoutButton;
 
+    private Lighthouse mLighthouse;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLighthouse = Lighthouse.with(this);
         setContentView(R.layout.activity_user);
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -37,14 +40,14 @@ public class UserActivity extends AppCompatActivity {
         mIdentifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Lighthouse.getInstance().identifyUser(mIdentifierEditText.getText().toString());
+                mLighthouse.identifyUser(mIdentifierEditText.getText().toString());
                 updateTextView();
             }
         });
         mLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Lighthouse.getInstance().logoutUser();
+                mLighthouse.logoutUser();
                 updateTextView();
             }
         });
@@ -54,7 +57,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void updateTextView() {
-        User user = Lighthouse.getInstance().getUser();
+        User user = mLighthouse.getUser();
         if (user.isAnonymous()) {
             mIdentifiedAsTextView.setText("Identified as Anonymous\n<" + user.getId() + ">");
         } else {

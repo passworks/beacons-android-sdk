@@ -10,28 +10,43 @@ Add HOKO to your `gradle.build` file:
 ```java
 // Build.gradle
 dependencies {
-	compile 'io.passworks:lighthouse:1.0'
+	compile 'io.passworks:lighthouse:2.0'
 }
 ```
 
 ## Setup
 
-### Step 1 - SDK Setup
+### Step 1 - SDK Initialization
 
-To setup the SDK all you are required to do is call `setup()` on your `Application` subclass on the `onCreate()` method.
+To initialize the SDK all you are required to do is create an instance on your `Activity`'s `onCreate()` method.
 
 ```java
-public class BeaconsApplication extends Application {
+public class BeaconsActivity extends Activity {
+
+	private Lighthouse mLighthouse;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Lighthouse.setup(this, "YOUR-APP-TOKEN")
+        mLighthouse = new Lighthouse(this);
     }
 }
 ```
 
 ### Step 2 - AndroidManifest.xml
+
+To make sure the SDK can communicate with the Lighthouse webservice, you should add the SDK token to the `AndroidManifest.xml`.
+
+```xml
+<meta-data android:name="LighthouseSDKToken" android:value="YOUR-LIGHTHOUSE-SDK-TOKEN"/>
+```
+
+Or set the SDK Token by code:
+```java
+Lighthouse.setToken("YOUR-LIGHTHOUSE-SDK-TOKEN");
+```
+
+#### Step 2.1 - Integration without Gradle
 
 **This step is only necessary if you are not integrating through gradle.**
 
@@ -49,6 +64,8 @@ Lighthouse also requires youto add the `LighthouseService` to perform actions wh
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <user-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".BeaconsApplication"
@@ -66,6 +83,45 @@ Lighthouse also requires youto add the `LighthouseService` to perform actions wh
 
 ```
 
+### Step 3 - Runtime Permissions (Android Marshmellow 6.0)
+
+Before calling `lightUp()` on `Lighthouse` under Android 6.0, you should check if you have either `ACCESS_COARSE_LOCATION` or `ACCESS_FINE_LOCATION` permissions. 
+
+In case you want Lighthouse to handle it, the following helper functions are available.
+
+```java
+public class BeaconsActivity extends Activity {
+
+	private Lighthouse mLighthouse;
+	private static int coarsePermissionRequestCode = 0;
+	
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mLighthouse = new Lighthouse(this);
+        if (mLighthouse.requestCoarseLocationPermission(BeaconsActivity.coarsePermissionRequestCode)) {
+        	mLighthouse.lightUp()
+        }
+    }
+    
+    @Override
+	public void onRequestPermissionsResult(int requestCode,
+        String permissions[], int[] grantResults) {
+    switch (requestCode) {
+        case coarsePermissionRequestCode: {
+            if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					mLighthouse.lightUp()
+            } 
+        }
+    }
+    
+}
+```
+
+
+```
+
 ## Beacon Scanning
 
 ### Starting
@@ -73,7 +129,7 @@ Lighthouse also requires youto add the `LighthouseService` to perform actions wh
 Lighthouse allows your app to be on the lookout for nearby beacons, as such, it requires you to turn on the beacon scanning feature by calling the `lightUp()` method on Lighthouse.
 
 ```java
-Lighthouse.getInstance().lightUp()
+mLighthouse.lightUp()
 ```
 
 This method call will turn on the bluetooth in the user's device and start scanning for beacons.
@@ -83,7 +139,7 @@ This method call will turn on the bluetooth in the user's device and start scann
 In case you want to stop ranging for beacons, you can call the `turnOff()` method which will then stop all location based beacon ranging.
 
 ```java
-Lighthouse.getInstance().turnOff()
+mLighthouse.turnOff()
 ```
 
 
@@ -92,7 +148,7 @@ Lighthouse.getInstance().turnOff()
 Lighthouse updates its database in several cases, when the SDK is setup, when the application returns to foreground or when an explicit call to `refresh()` is triggered. This will then refresh all the beacons, events and tags set in the Passworks.io dashboard.
 
 ```java
-Lighthouse.getInstance().refresh()
+mLighthouse.refresh()
 ```
 
 ### Delegating
@@ -104,7 +160,7 @@ Lighthouse will adopt the behavior defined in the Passworks.io dashboard, so any
 To be notified when beacons are refreshed or change proximity you can implement and set the `BeaconsListener` interface.
 
 ```java
-Lighthouse.getInstance().setBeaconsListener(new BeaconsListener() {
+mLighthouse.setBeaconsListener(new BeaconsListener() {
             @Override
             public void beaconsRefreshed(List<Beacon> beacons) {
                 Log.d("Lighthouse", beacons.size() + " beacons in the database.");
@@ -126,7 +182,7 @@ Lighthouse.getInstance().setBeaconsListener(new BeaconsListener() {
 The same can be applied to the `EventsListener` interface, where the application can be notified when an event is triggered.
 
 ```java
-Lighthouse.getInstance().setEventsListener(new EventsListener() {
+mLighthouse.setEventsListener(new EventsListener() {
             @Override
             public void eventTriggered(Event event, Beacon beacon) {
                 Log.d("Lighthouse", "Triggered event " + event.getName() + " on beacon " + beacon.getName());
@@ -141,7 +197,7 @@ Lighthouse.getInstance().setEventsListener(new EventsListener() {
 For even greater control on how and when events are triggered, the application can implement a `EventsTriggerFilter` interface to filter out unwanted events.
 
 ```java
-Lighthouse.getInstance().setEventsTriggerFilter(new EventsTriggerFilter() {
+mLighthouse.setEventsTriggerFilter(new EventsTriggerFilter() {
             @Override
             public boolean shouldTriggerEvent(Event event, Beacon beacon) {
                 return event.getName().contains("iOS");

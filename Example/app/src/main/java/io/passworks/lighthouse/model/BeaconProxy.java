@@ -1,22 +1,25 @@
 package io.passworks.lighthouse.model;
 
 import io.passworks.lighthouse.Lighthouse;
+import io.passworks.lighthouse.db.DatabaseHelper;
 import io.passworks.lighthouse.model.enums.Proximity;
+import io.passworks.lighthouse.networking.Networking;
+import io.passworks.lighthouse.utils.AppUtils;
 
 /**
  * Created by ivanbruel on 17/09/15.
  */
 public class BeaconProxy {
 
-    public static void changeBeaconProximity(Beacon beacon, Proximity proximity) {
+    public static void changeBeaconProximity(Lighthouse lighthouse, Beacon beacon, Proximity proximity) {
         Proximity previousProximity = beacon.getProximity();
-        beacon.setProximity(Lighthouse.getInstance().getContext(),
-                Lighthouse.getInstance().getToken(), proximity, true,
-                Lighthouse.getInstance().getEventsTriggerFilter(),
-                Lighthouse.getInstance().getNotificationsManager(),
-                Lighthouse.getInstance().getEventsListener());
-        if (previousProximity != proximity && Lighthouse.getInstance().getBeaconsListener() != null) {
-            Lighthouse.getInstance().getBeaconsListener().beaconChangedProximity(beacon);
+        beacon.setProximity(lighthouse.getNetworking(), lighthouse.getDatabaseHelper(), lighthouse.getContext(),
+                lighthouse.getToken(), AppUtils.getEnvironment(lighthouse.getContext()), proximity, true,
+                lighthouse.getEventsTriggerFilter(),
+                lighthouse.getNotificationsManager(),
+                lighthouse.getEventsListener());
+        if (previousProximity != proximity && lighthouse.getBeaconsListener() != null) {
+            lighthouse.getBeaconsListener().beaconChangedProximity(beacon);
 
         }
     }
