@@ -225,7 +225,7 @@ Lighthouse allows user tracking to get the best out of the analytics on top of t
 
 Lighthouse allows you to dig into the database which is composed by `Beacon`, `Tag` and `Event`. 
 
-The Lighthouse `getInstance()` contains `getBeacons()`, `getBeaconsInRange()`, `getTags()` and `getEvents()`. These represent lists of their corresponding object models mentioned above.
+Lighthouse contains `getBeacons()`, `getBeaconsInRange()`, `getTags()` and `getEvents()`. These represent lists of their corresponding object models mentioned above.
 
 ### Tag
 
