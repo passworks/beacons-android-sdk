@@ -28,7 +28,7 @@ public class BeaconsActivity extends Activity {
     @Override
     public void onCreate() {
         super.onCreate();
-        mLighthouse = new Lighthouse(this);
+        mLighthouse = Lighthouse.with(this);
     }
 }
 ```
@@ -98,7 +98,7 @@ public class BeaconsActivity extends Activity {
     @Override
     public void onCreate() {
         super.onCreate();
-        mLighthouse = new Lighthouse(this);
+        mLighthouse = Lighthouse.with(this);
         if (mLighthouse.requestCoarseLocationPermission(BeaconsActivity.coarsePermissionRequestCode)) {
         	mLighthouse.lightUp()
         }
